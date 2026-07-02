@@ -41,6 +41,7 @@ def up(uid):
         PAID[uid] -= 1
         return True
     return False
+
 async def tg(p):
     try:
         e = await tc.get_entity(p)
@@ -162,6 +163,21 @@ async def ua_operator(phone):
 async def ua_links(phone):
     c = phone.lstrip("+")
     return f"🔍 *UA поиск:*\n• [KtoZvonil](https://ktozvonil.com.ua/phone/{c})\n• [Dovidnyk](https://telefonnyjdovidnyk.com.ua/nomer/{c})"
+
+async def all_links(phone):
+    c = phone.lstrip("+")
+    return (
+        f"🔍 *Международный поиск:*\n"
+        f"🇷🇺 [KtoZvonil.ru](https://ktozvonil.ru/phone/{c})\n"
+        f"🇺🇦 [KtoZvonil.ua](https://ktozvonil.com.ua/phone/{c})\n"
+        f"🇧🇾 [KtoZvonil.by](https://ktozvonil.by/phone/{c})\n"
+        f"🇰🇿 [KtoZvonil.kz](https://ktozvonil.kz/phone/{c})\n"
+        f"🌍 [NumLookup](https://numlookup.com/phone/{c})\n"
+        f"🌍 [SpyDialer](https://spydialer.com/phone/{c})\n"
+        f"🌍 [ZLookup](https://zlookup.com/phone/{c})\n"
+        f"🌍 [Truecaller](https://truecaller.com/search/{c})"
+    )
+
 async def nick(n):
     sites = {"📷 Instagram":f"instagram.com/{n}","🐦 Twitter":f"twitter.com/{n}","💻 GitHub":f"github.com/{n}","🎵 TikTok":f"tiktok.com/@{n}","📘 VK":f"vk.com/{n}","▶️ YouTube":f"youtube.com/@{n}","👽 Reddit":f"reddit.com/user/{n}","🎮 Twitch":f"twitch.tv/{n}","🎯 Steam":f"steamcommunity.com/id/{n}","👤 Facebook":f"facebook.com/{n}","📌 Pinterest":f"pinterest.com/{n}","👻 Snapchat":f"snapchat.com/add/{n}"}
     async def check(name, url):
@@ -226,6 +242,7 @@ async def save_cmd(update: Update, ctx):
     with open(f"/sdcard/Download/search_{uid}.txt", "w") as f:
         f.write(LAST[uid])
     await update.message.reply_text(f"✅ Сохранено в /sdcard/Download/search_{uid}.txt")
+
 async def start(update: Update, ctx):
     uid = update.effective_user.id
     f = gf(uid)
@@ -274,13 +291,6 @@ async def start(update: Update, ctx):
         "⚡ *Отправь номер, ник, email или команду!*"
     ).format(f=f, p=p)
     await update.message.reply_text(msg, parse_mode="Markdown", disable_web_page_preview=True)
-    uid = update.effective_user.id
-    f = gf(uid)
-    p = PAID.get(uid,0)
-    vip = "⭐ ДА" if (uid == ADMIN or uid in WL) else "❌ НЕТ"
-    banned = "⛔ ДА" if uid in BANNED else "✅ НЕТ"
-    msg = f"👤 *ТВОЙ ПРОФИЛЬ*\n\n🆔 ID: `{uid}`\n🎁 Бесплатных: `{f}/2`\n💎 Куплено: `{p}`\n⭐ VIP: {vip}\n⛔ Бан: {banned}\n\n💸 Пополнить: {DONATE}"
-    await update.message.reply_text(msg, parse_mode="Markdown", disable_web_page_preview=True)
 
 async def profile_cmd(update: Update, ctx):
     uid = update.effective_user.id
@@ -322,6 +332,7 @@ async def unvip_cmd(update: Update, ctx):
 async def list_cmd(update: Update, ctx):
     if update.effective_user.id != ADMIN: return
     await update.message.reply_text(f"VIP: {WL}\nКоды: {CODES}")
+
 async def handle(update: Update, ctx):
     uid = update.effective_user.id
     t = update.message.text.strip() if update.message.text else ""
@@ -406,6 +417,7 @@ async def handle(update: Update, ctx):
     rep += f"🔗 [WA](https://wa.me/{c}) | [TG](https://t.me/+{c})"
     LAST[uid] = rep
     await update.message.reply_text(rep, parse_mode="Markdown", disable_web_page_preview=True)
+
 def main():
     app = Application.builder().token(BOT).build()
     app.add_handler(CommandHandler("start", start))
@@ -421,65 +433,3 @@ def main():
     app.run_polling()
 
 main()
-async def start(update: Update, ctx):
-    uid = update.effective_user.id
-    f = gf(uid)
-    p = PAID.get(uid,0)
-    msg = (
-        "```\n"
-        "╔══════════════════════════╗\n"
-        "║  🔍 ULTIMATE SEARCH v7.0  ║\n"
-        "║     by @Vkgoy            ║\n"
-        "╚══════════════════════════╝\n"
-        "```\n\n"
-        "👑 *ПРЕМИУМ-ПОИСК*\n\n"
-        f"🆓 Бесплатно: `{f}/2`\n"
-        f"💎 Куплено: `{p}`\n\n"
-        "▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰\n\n"
-        "📞 *НОМЕР ТЕЛЕФОНА*\n"
-        "• 🌍 Страна, город, регион\n"
-        "• 📶 Оператор, тип линии\n"
-        "• 👤 Telegram (имя + фото)\n"
-        "• 💬 WhatsApp, Viber, Signal\n"
-        "• 🛡 Спам-проверка\n"
-        "• ⚠️ Утечки данных\n"
-        "• 🗺 Карта региона\n"
-        "• 🔍 Поиск в Telegram\n"
-        "• 🌍 Международные базы (РФ, UA, BY, KZ)\n\n"
-        "👤 *НИКНЕЙМ*\n"
-        "• 12 соцсетей с ссылками\n\n"
-        "📧 *EMAIL*\n"
-        "• Утечки + профили\n\n"
-        "🌐 *IP* `/ip 8.8.8.8`\n"
-        "💳 *BIN* `/bin 220431`\n"
-        "🆔 *TG ID* `/id 123456789`\n"
-        "🚗 *АВТО* `/car А123БВ177`\n"
-        "📍 *АДРЕС* `/addr Москва`\n"
-        "📸 *ФОТО* поиск по лицу\n\n"
-        "▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰\n\n"
-        "💳 *ТАРИФЫ*\n"
-        "🔥 5 запр. — 1.5$\n"
-        "🔥 10 запр. — 3.0$\n"
-        "🔥 15 запр. — 4.5$\n\n"
-        f"💸 Оплата: {DONATE}\n"
-        "🔑 /code КОД\n"
-        "👤 /profile\n"
-        "💾 /save\n"
-        "📊 /stats\n\n"
-        "⚡ *Отправь номер, ник, email или команду!*"
-    ).format(f=f, p=p)
-    await update.message.reply_text(msg, parse_mode="Markdown", disable_web_page_preview=True)
-
-async def all_links(phone):
-    c = phone.lstrip("+")
-    return (
-        f"🔍 *Международный поиск:*\n"
-        f"🇷🇺 [KtoZvonil.ru](https://ktozvonil.ru/phone/{c})\n"
-        f"🇺🇦 [KtoZvonil.ua](https://ktozvonil.com.ua/phone/{c})\n"
-        f"🇧🇾 [KtoZvonil.by](https://ktozvonil.by/phone/{c})\n"
-        f"🇰🇿 [KtoZvonil.kz](https://ktozvonil.kz/phone/{c})\n"
-        f"🌍 [NumLookup](https://numlookup.com/phone/{c})\n"
-        f"🌍 [SpyDialer](https://spydialer.com/phone/{c})\n"
-        f"🌍 [ZLookup](https://zlookup.com/phone/{c})\n"
-        f"🌍 [Truecaller](https://truecaller.com/search/{c})"
-    )
