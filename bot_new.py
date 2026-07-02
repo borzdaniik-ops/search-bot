@@ -53,19 +53,7 @@ async def tg(p):
 
 async def info(p):
     c = p.lstrip("+")
-    try:
-        u = f"https://apilayer.net/api/validate?access_key={NUM}&number={c}&format=1"
-        async with aiohttp.ClientSession() as s:
-            async with s.get(u, timeout=aiohttp.ClientTimeout(10)) as r:
-                d = await r.json()
-        if d.get("valid"):
-            co = CN.get(d.get("country_name",""), d.get("country_name","?"))
-            li = LT.get(d.get("line_type",""), d.get("line_type","?"))
-            city = d.get("location","?")
-            return f"🌍 *Страна:* {co}\n🏙 *Город:* {city}\n📶 *Оператор:* {d.get('carrier','?')}\n📱 *Тип:* {li}\n🔢 *Код:* +{d.get('country_code','?')}"
-    except:
-        pass
-    return "❌ *Данные не найдены*"
+    return f"🔍 *Номер {p}:*\n\n🌍 [Numverify](https://numverify.com)\n📞 [KtoZvonil](https://ktozvonil.ru/phone/{c})\n🔗 [WhoCallsMe](https://whocallsme.com/Phone-Number.aspx/{c})"
 
 async def leak(p):
     c = p.lstrip("+")
