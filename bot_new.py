@@ -1,18 +1,15 @@
-import re, logging, aiohttp, random, string, base64, asyncio
+import re, logging, aiohttp, random, string
 from datetime import date
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
-from telethon import TelegramClient
 
 BOT = "8640914849:AAF5NCl4ajFrFR81VbdIHzRFvfANHWB6Wf4"
-NUM = "2843e2a1a324f6a4420e2aa4ca9fe615"
 DONATE = "https://dalink.to/daniksayko"
 ADMIN = 7783324307
 WL = {8562396880}
 BANNED = set()
 MY = "+79963212799"
 
-tc = TelegramClient('telethon_session', 2040, "b18441a1ff607e10a989891a5462e627")
 logging.basicConfig(level=logging.INFO)
 FREE = {}
 CODES = {}
@@ -43,29 +40,17 @@ async def info(p):
     c = p.lstrip("+")
     return f"🔍 *Номер {p}:*\n\n🌍 [Numverify](https://numverify.com)\n📞 [KtoZvonil](https://ktozvonil.ru/phone/{c})\n🔗 [WhoCallsMe](https://whocallsme.com/Phone-Number.aspx/{c})"
 
-async def leak(p):
-    return ""
-
 async def messengers(phone):
     clean = phone.lstrip("+")
     return f"💬 *Мессенджеры:*\n✅ [WhatsApp](https://wa.me/{clean})\n✅ [Viber](https://viber.click/{clean})\n✅ [Telegram](https://t.me/+{clean})\n✅ [Signal](https://signal.me/+{clean})"
-
-async def spam_multi(phone):
-    return ""
 
 async def tg_search_groups(phone):
     c = phone.lstrip("+")
     return f"🔍 *TG поиск:* [Нажми](tg://search?query={c})"
 
-async def extra_operator(phone):
-    return ""
-
 async def map_link(phone):
     c = phone.lstrip("+")
     return f"🗺 *Карта:* [Google Maps](https://maps.google.com/?q={c})"
-
-async def ua_operator(phone):
-    return ""
 
 async def ua_links(phone):
     c = phone.lstrip("+")
@@ -87,15 +72,7 @@ async def all_links(phone):
 
 async def nick(n):
     sites = {"📷 Instagram":f"instagram.com/{n}","🐦 Twitter":f"twitter.com/{n}","💻 GitHub":f"github.com/{n}","🎵 TikTok":f"tiktok.com/@{n}","📘 VK":f"vk.com/{n}","▶️ YouTube":f"youtube.com/@{n}","👽 Reddit":f"reddit.com/user/{n}","🎮 Twitch":f"twitch.tv/{n}","🎯 Steam":f"steamcommunity.com/id/{n}","👤 Facebook":f"facebook.com/{n}","📌 Pinterest":f"pinterest.com/{n}","👻 Snapchat":f"snapchat.com/add/{n}"}
-    async def check(name, url):
-        try:
-            async with aiohttp.ClientSession() as s:
-                async with s.get(f"https://{url}", timeout=aiohttp.ClientTimeout(2)) as r:
-                    return f"✅ {name}: [Ссылка](https://{url})" if r.status == 200 else f"❌ {name}"
-        except: return f"⚠️ {name}"
-    tasks = [check(name, url) for name, url in sites.items()]
-    results = await asyncio.gather(*tasks)
-    return "\n".join(results)
+    return "\n".join([f"✅ {name}: [Ссылка](https://{url})" for name, url in sites.items()])
 
 async def email_leak(email):
     return f"📧 *{email}*\n\n🔍 [Have I Been Pwned](https://haveibeenpwned.com/account/{email})\n🔍 [LeakCheck](https://leakcheck.io/?check={email})"
@@ -108,26 +85,10 @@ async def ip_info(ip):
     return f"🌐 *IP:* `{ip}`\n\n🔍 [ip-api.com](http://ip-api.com/{ip}) | [Whois](https://who.is/whois/{ip})"
 
 async def car_info(g):
-    try:
-        async with aiohttp.ClientSession() as s:
-            async with s.get(f"https://carnumber.ru/api/v1?number={g}", timeout=aiohttp.ClientTimeout(10)) as r:
-                d = await r.json()
-        if d.get("success"):
-            c = d.get("data", {})
-            return f"🚗 *Авто:* {c.get('brand','?')} {c.get('model','?')}\n📅 Год: {c.get('year','?')}\n🎨 Цвет: {c.get('color','?')}"
-    except: pass
-    return "❌ *Авто не найдено*"
+    return f"🚗 *Авто:* [Поиск](https://carnumber.ru/api/v1?number={g})"
 
 async def address_info(a):
-    try:
-        async with aiohttp.ClientSession() as s:
-            async with s.get(f"https://nominatim.openstreetmap.org/search?q={a}&format=json&limit=1&accept-language=ru", headers={"User-Agent":"Mozilla/5.0"}, timeout=aiohttp.ClientTimeout(10)) as r:
-                d = await r.json()
-        if d:
-            p = d[0]
-            return f"📍 *Адрес:* {p.get('display_name','?')}\n🌐 Координаты: {p.get('lat','?')}, {p.get('lon','?')}\n🔗 [Кадастровая карта](https://pkk.rosreestr.ru/#/search/{p.get('lat','?')},{p.get('lon','?')}/)"
-    except: pass
-    return "❌ *Адрес не найден*"
+    return f"📍 *Адрес:* [Поиск](https://nominatim.openstreetmap.org/search?q={a}&format=json&limit=1&accept-language=ru)"
 
 async def bin_info(bin):
     return f"💳 *BIN:* `{bin}`\n\n🔍 [binlist.net](https://lookup.binlist.net/{bin}) | [Банки.ру](https://www.banki.ru/banks/bin/?bin={bin})"
@@ -166,15 +127,11 @@ async def start(update: Update, ctx):
         f"💎 Куплено: `{p}`\n\n"
         "▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰\n\n"
         "📞 *НОМЕР ТЕЛЕФОНА*\n"
-        "• 🌍 Страна, город, регион\n"
-        "• 📶 Оператор, тип линии\n"
-        "• 👤 Telegram (имя + фото)\n"
+        "• 🔍 Ссылки на поиск\n"
         "• 💬 WhatsApp, Viber, Signal\n"
-        "• 🛡 Спам-проверка\n"
-        "• ⚠️ Утечки данных\n"
         "• 🗺 Карта региона\n"
         "• 🔍 Поиск в Telegram\n"
-        "• 🌍 Международные базы (РФ, UA, BY, KZ)\n\n"
+        "• 🌍 Международные базы\n\n"
         "👤 *НИКНЕЙМ*\n"
         "• 12 соцсетей с ссылками\n\n"
         "📧 *EMAIL*\n"
@@ -301,7 +258,6 @@ async def handle(update: Update, ctx):
     c = t[1:]
     if not ok(uid) and gf(uid) <= 0: await update.message.reply_text(f"🔒 Нет доступа\n{DONATE}"); return
     
-    await update.message.reply_text("🔍 *Поиск...*", parse_mode="Markdown")
     rep = f"```\n📞 {t}\n```\n"
     if uid == ADMIN or uid in WL: rep += "⭐ *VIP*\n\n"
     elif uid in PAID and PAID[uid] > 0: up(uid); rep += f"💎 Ост: `{PAID[uid]}`\n\n"
@@ -310,13 +266,9 @@ async def handle(update: Update, ctx):
     rep += f"{await info(t)}\n\n📱 *Мессенджеры:*\n{await messengers(t)}\n\n"
     rep += f"👤 *TG:* [Открыть](https://t.me/+{c})\n"
     STATS[t] = STATS.get(t, 0) + 1
-    rep += f"\n{await extra_operator(t)}\n"
-    rep += f"{await map_link(t)}\n"
-    rep += f"\n{await ua_operator(t)}\n"
-    rep += f"{await ua_links(t)}\n"
+    rep += f"\n{await map_link(t)}\n"
+    rep += f"\n{await ua_links(t)}\n"
     rep += f"{await all_links(t)}\n"
-    rep += f"\n{await spam_multi(t)}\n"
-    rep += f"\n🛡 {await leak(t)}\n\n"
     rep += f"{await tg_search_groups(t)}\n"
     rep += f"🔍 [Google](https://google.com/search?q={c}) | [VK](https://vk.com/search?c[phone]=1&c[phone_number]={c})\n"
     rep += f"🔗 [WA](https://wa.me/{c}) | [TG](https://t.me/+{c})"
