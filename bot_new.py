@@ -42,15 +42,6 @@ def up(uid):
         return True
     return False
 
-async def tg(p):
-    try:
-        e = await tc.get_entity(p)
-        n = f"{e.first_name or ''} {e.last_name or ''}".strip()
-        ph = await tc.download_profile_photo(e, file=bytes) if e.photo else None
-        return n, ph
-    except:
-        return None, None
-
 async def info(p):
     c = p.lstrip("+")
     return f"🔍 *Номер {p}:*\n\n🌍 [Numverify](https://numverify.com)\n📞 [KtoZvonil](https://ktozvonil.ru/phone/{c})\n🔗 [WhoCallsMe](https://whocallsme.com/Phone-Number.aspx/{c})"
@@ -71,24 +62,7 @@ async def leak(p):
 
 async def messengers(phone):
     clean = phone.lstrip("+")
-    async def check(msg, url):
-        try:
-            async with aiohttp.ClientSession() as s:
-                async with s.get(url, timeout=aiohttp.ClientTimeout(3)) as r:
-                    return f"✅ {msg}" if r.status == 200 else f"❌ {msg}"
-        except: return f"⚠️ {msg}"
-    tasks = [
-        check("WhatsApp", f"https://wa.me/{clean}"),
-        check("Viber", f"https://viber.click/{clean}"),
-        check("Signal", f"https://signal.me/+{clean}")
-    ]
-    results = await asyncio.gather(*tasks)
-    try:
-        entity = await tc.get_entity(f"+{clean}")
-        results.append("✅ Telegram")
-    except:
-        results.append("❌ Telegram")
-    return "\n".join(results)
+    return f"💬 *Мессенджеры:*\n✅ [WhatsApp](https://wa.me/{clean})\n✅ [Viber](https://viber.click/{clean})\n✅ [Telegram](https://t.me/+{clean})\n✅ [Signal](https://signal.me/+{clean})"
 
 async def spam_multi(phone):
     c = phone.lstrip("+")
@@ -122,16 +96,7 @@ async def extra_operator(phone):
 
 async def map_link(phone):
     c = phone.lstrip("+")
-    try:
-        u = f"https://apilayer.net/api/validate?access_key={NUM}&number={c}&format=1"
-        async with aiohttp.ClientSession() as s:
-            async with s.get(u, timeout=aiohttp.ClientTimeout(10)) as r:
-                d = await r.json()
-        if d.get("valid") and d.get("location"):
-            loc = d.get("location","")
-            return f"🗺 *Карта:* [Google Maps](https://maps.google.com/?q={loc})"
-    except: pass
-    return ""
+    return f"🗺 *Карта:* [Google Maps](https://maps.google.com/?q={c})"
 
 async def ua_operator(phone):
     c = phone.lstrip("+")
@@ -389,9 +354,7 @@ async def handle(update: Update, ctx):
     else: uf(uid); rep += f"🆓 Ост: `{gf(uid)}/2`\n\n"
     
     rep += f"{await info(t)}\n\n📱 *Мессенджеры:*\n{await messengers(t)}\n\n"
-    n, ph = await tg(t)
-    rep += f"👤 *TG:* `{n}`\n" if n else "👤 *TG:* ❌\n"
-    if ph: await update.message.reply_photo(ph)
+    rep += f"👤 *TG:* [Открыть](https://t.me/+{c})\n"
     STATS[t] = STATS.get(t, 0) + 1
     rep += f"\n{await extra_operator(t)}\n"
     rep += f"{await map_link(t)}\n"
