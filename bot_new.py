@@ -20,9 +20,6 @@ PAID = {}
 STATS = {}
 LAST = {}
 
-CN = {"Russian Federation":"🇷🇺 Россия","Ukraine":"🇺🇦 Украина","Belarus":"🇧🇾 Беларусь","Kazakhstan":"🇰🇿 Казахстан","United States":"🇺🇸 США","Germany":"🇩🇪 Германия","France":"🇫🇷 Франция","China":"🇨🇳 Китай","United Kingdom":"🇬🇧 Британия"}
-LT = {"mobile":"📱 Мобильный","landline":"☎️ Городской","voip":"💻 VoIP","toll free":"🆓 Бесплатный"}
-
 def gf(uid):
     t = str(date.today())
     if uid in FREE and FREE[uid]["date"] == t: return FREE[uid]["count"]
@@ -47,51 +44,20 @@ async def info(p):
     return f"🔍 *Номер {p}:*\n\n🌍 [Numverify](https://numverify.com)\n📞 [KtoZvonil](https://ktozvonil.ru/phone/{c})\n🔗 [WhoCallsMe](https://whocallsme.com/Phone-Number.aspx/{c})"
 
 async def leak(p):
-    c = p.lstrip("+")
-    try:
-        u = f"https://leakcheck.io/api/public?check={c}"
-        async with aiohttp.ClientSession() as s:
-            async with s.get(u, headers={"User-Agent":"Mozilla/5.0"}, timeout=aiohttp.ClientTimeout(10)) as r:
-                d = await r.json()
-                if d.get("success") and d.get("found",0) > 0:
-                    srcs = [s.get("name","?") for s in d.get("sources",[])]
-                    return f"⚠️ *Найден в {d['found']} утечках!*\n📋 {', '.join(srcs[:5])}"
-    except:
-        pass
-    return "✅ *Утечек не найдено*"
+    return ""
 
 async def messengers(phone):
     clean = phone.lstrip("+")
     return f"💬 *Мессенджеры:*\n✅ [WhatsApp](https://wa.me/{clean})\n✅ [Viber](https://viber.click/{clean})\n✅ [Telegram](https://t.me/+{clean})\n✅ [Signal](https://signal.me/+{clean})"
 
 async def spam_multi(phone):
-    c = phone.lstrip("+")
-    try:
-        async with aiohttp.ClientSession() as s:
-            async with s.get(f"https://spamcheck.ru/api/v1/check?phone={c}", timeout=aiohttp.ClientTimeout(5)) as r:
-                if r.status == 200:
-                    d = await r.json()
-                    if d.get("spam"):
-                        return f"🛡 *Спам:* ⚠️ {d.get('rating','?')} жалоб"
-    except: pass
-    return "🛡 *Спам:* ✅ Не замечен"
+    return ""
 
 async def tg_search_groups(phone):
     c = phone.lstrip("+")
     return f"🔍 *TG поиск:* [Нажми](tg://search?query={c})"
 
 async def extra_operator(phone):
-    c = phone.lstrip("+")
-    try:
-        u = f"https://htmlweb.ru/geo/api.php?telcod={c}&json"
-        async with aiohttp.ClientSession() as s:
-            async with s.get(u, timeout=aiohttp.ClientTimeout(10)) as r:
-                d = await r.json()
-        if d.get("country"):
-            op = d.get("0",{}).get("oper","?")
-            reg = d.get("0",{}).get("name","?")
-            return f"📶 *Доп. оператор:* {op}\n📍 *Регион:* {reg}"
-    except: pass
     return ""
 
 async def map_link(phone):
@@ -99,18 +65,6 @@ async def map_link(phone):
     return f"🗺 *Карта:* [Google Maps](https://maps.google.com/?q={c})"
 
 async def ua_operator(phone):
-    c = phone.lstrip("+")
-    try:
-        u = f"https://htmlweb.ru/geo/api.php?telcod={c}&json"
-        async with aiohttp.ClientSession() as s:
-            async with s.get(u, timeout=aiohttp.ClientTimeout(10)) as r:
-                d = await r.json()
-        if d.get("country") == "Украина":
-            op = d.get("0",{}).get("oper","?")
-            reg = d.get("0",{}).get("name","?")
-            city = d.get("0",{}).get("city","?")
-            return f"🇺🇦 *Украина*\n📶 *Оператор:* {op}\n📍 *Регион:* {reg}\n🏙 *Город:* {city}"
-    except: pass
     return ""
 
 async def ua_links(phone):
