@@ -38,78 +38,25 @@ def up(uid):
 
 async def info(p):
     c = p.lstrip("+")
-    return f"🔍 *Номер {p}:*\n\n🌍 [Numverify](https://numverify.com)\n📞 [KtoZvonil](https://ktozvonil.ru/phone/{c})\n🔗 [WhoCallsMe](https://whocallsme.com/Phone-Number.aspx/{c})"
+    return f"🔍 *Номер {p}:*\n🌍 [Numverify](https://numverify.com)\n📞 [KtoZvonil](https://ktozvonil.ru/phone/{c})"
 
 async def messengers(phone):
-    clean = phone.lstrip("+")
-    return f"💬 *Мессенджеры:*\n✅ [WhatsApp](https://wa.me/{clean})\n✅ [Viber](https://viber.click/{clean})\n✅ [Telegram](https://t.me/+{clean})\n✅ [Signal](https://signal.me/+{clean})"
-
-async def tg_search_groups(phone):
     c = phone.lstrip("+")
-    return f"🔍 *TG поиск:* [Нажми](tg://search?query={c})"
-
-async def map_link(phone):
-    c = phone.lstrip("+")
-    return f"🗺 *Карта:* [Google Maps](https://maps.google.com/?q={c})"
-
-async def ua_links(phone):
-    c = phone.lstrip("+")
-    return f"🔍 *UA поиск:*\n• [KtoZvonil](https://ktozvonil.com.ua/phone/{c})\n• [Dovidnyk](https://telefonnyjdovidnyk.com.ua/nomer/{c})"
+    return f"💬 [WhatsApp](https://wa.me/{c}) | [Viber](https://viber.click/{c}) | [Telegram](https://t.me/+{c}) | [Signal](https://signal.me/+{c})"
 
 async def all_links(phone):
     c = phone.lstrip("+")
-    return (
-        f"🔍 *Международный поиск:*\n"
-        f"🇷🇺 [KtoZvonil.ru](https://ktozvonil.ru/phone/{c})\n"
-        f"🇺🇦 [KtoZvonil.ua](https://ktozvonil.com.ua/phone/{c})\n"
-        f"🇧🇾 [KtoZvonil.by](https://ktozvonil.by/phone/{c})\n"
-        f"🇰🇿 [KtoZvonil.kz](https://ktozvonil.kz/phone/{c})\n"
-        f"🌍 [NumLookup](https://numlookup.com/phone/{c})\n"
-        f"🌍 [SpyDialer](https://spydialer.com/phone/{c})\n"
-        f"🌍 [ZLookup](https://zlookup.com/phone/{c})\n"
-        f"🌍 [Truecaller](https://truecaller.com/search/{c})"
-    )
+    return f"🌍 [NumLookup](https://numlookup.com/phone/{c}) | [SpyDialer](https://spydialer.com/phone/{c}) | [Truecaller](https://truecaller.com/search/{c})"
 
 async def nick(n):
     sites = {"📷 Instagram":f"instagram.com/{n}","🐦 Twitter":f"twitter.com/{n}","💻 GitHub":f"github.com/{n}","🎵 TikTok":f"tiktok.com/@{n}","📘 VK":f"vk.com/{n}","▶️ YouTube":f"youtube.com/@{n}","👽 Reddit":f"reddit.com/user/{n}","🎮 Twitch":f"twitch.tv/{n}","🎯 Steam":f"steamcommunity.com/id/{n}","👤 Facebook":f"facebook.com/{n}","📌 Pinterest":f"pinterest.com/{n}","👻 Snapchat":f"snapchat.com/add/{n}"}
     return "\n".join([f"✅ {name}: [Ссылка](https://{url})" for name, url in sites.items()])
 
 async def email_leak(email):
-    return f"📧 *{email}*\n\n🔍 [Have I Been Pwned](https://haveibeenpwned.com/account/{email})\n🔍 [LeakCheck](https://leakcheck.io/?check={email})"
-
-async def email_social(email):
-    local = email.split("@")[0]
-    return f"🔍 *Профили по email:*\n📸 [Gravatar](https://gravatar.com/{local})\n💻 [GitHub](https://github.com/{local})\n📘 [VK](https://vk.com/{local})\n🐦 [Twitter](https://twitter.com/{local})"
+    return f"📧 [Have I Been Pwned](https://haveibeenpwned.com/account/{email}) | [LeakCheck](https://leakcheck.io/?check={email})"
 
 async def ip_info(ip):
-    return f"🌐 *IP:* `{ip}`\n\n🔍 [ip-api.com](http://ip-api.com/{ip}) | [Whois](https://who.is/whois/{ip})"
-
-async def car_info(g):
-    return f"🚗 *Авто:* [Поиск](https://carnumber.ru/api/v1?number={g})"
-
-async def address_info(a):
-    return f"📍 *Адрес:* [Поиск](https://nominatim.openstreetmap.org/search?q={a}&format=json&limit=1&accept-language=ru)"
-
-async def bin_info(bin):
-    return f"💳 *BIN:* `{bin}`\n\n🔍 [binlist.net](https://lookup.binlist.net/{bin}) | [Банки.ру](https://www.banki.ru/banks/bin/?bin={bin})"
-
-async def tg_id_info(uid):
-    return f"🆔 *Telegram ID:* `{uid}`\n\n🔗 [t.me/@id{uid}](https://t.me/@id{uid})"
-
-async def stats_cmd(update: Update, ctx):
-    if update.effective_user.id != ADMIN: return
-    top = sorted(STATS.items(), key=lambda x: x[1], reverse=True)[:10]
-    msg = "📊 *Топ-10 искомых номеров:*\n\n" + "\n".join([f"📞 `{p}` — {c} раз" for p, c in top])
-    await update.message.reply_text(msg, parse_mode="Markdown")
-
-async def save_cmd(update: Update, ctx):
-    uid = update.effective_user.id
-    if uid not in LAST:
-        await update.message.reply_text("❌ Нет сохранённых результатов")
-        return
-    with open(f"/sdcard/Download/search_{uid}.txt", "w") as f:
-        f.write(LAST[uid])
-    await update.message.reply_text(f"✅ Сохранено в /sdcard/Download/search_{uid}.txt")
+    return f"🌐 [ip-api.com](http://ip-api.com/{ip}) | [Whois](https://who.is/whois/{ip})"
 
 async def start(update: Update, ctx):
     uid = update.effective_user.id
@@ -127,21 +74,20 @@ async def start(update: Update, ctx):
         f"💎 Куплено: `{p}`\n\n"
         "▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰\n\n"
         "📞 *НОМЕР ТЕЛЕФОНА*\n"
-        "• 🔍 Ссылки на поиск\n"
-        "• 💬 WhatsApp, Viber, Signal\n"
-        "• 🗺 Карта региона\n"
-        "• 🔍 Поиск в Telegram\n"
-        "• 🌍 Международные базы\n\n"
+        "• 🔍 Ссылки на Numverify, KtoZvonil\n"
+        "• 💬 Ссылки WhatsApp, Viber, Telegram, Signal\n"
+        "• 🌍 Международные базы (NumLookup, SpyDialer, Truecaller)\n"
+        "• 🔍 Поиск в Google и VK\n\n"
         "👤 *НИКНЕЙМ*\n"
-        "• 12 соцсетей с ссылками\n\n"
+        "• Ссылки на 12 соцсетей\n\n"
         "📧 *EMAIL*\n"
-        "• Утечки + профили\n\n"
+        "• Ссылки Have I Been Pwned, LeakCheck\n\n"
         "🌐 *IP* `/ip 8.8.8.8`\n"
         "💳 *BIN* `/bin 220431`\n"
         "🆔 *TG ID* `/id 123456789`\n"
         "🚗 *АВТО* `/car А123БВ177`\n"
         "📍 *АДРЕС* `/addr Москва`\n"
-        "📸 *ФОТО* поиск по лицу\n\n"
+        "📸 *ФОТО* ссылки на поиск\n\n"
         "▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰▰\n\n"
         "💳 *ТАРИФЫ*\n"
         "🔥 5 запр. — 1.5$\n"
@@ -162,7 +108,7 @@ async def profile_cmd(update: Update, ctx):
     p = PAID.get(uid,0)
     vip = "⭐ ДА" if (uid == ADMIN or uid in WL) else "❌ НЕТ"
     banned = "⛔ ДА" if uid in BANNED else "✅ НЕТ"
-    msg = f"👤 *ТВОЙ ПРОФИЛЬ*\n\n🆔 ID: `{uid}`\n🎁 Бесплатных: `{f}/2`\n💎 Куплено: `{p}`\n⭐ VIP: {vip}\n⛔ Бан: {banned}\n\n💸 Пополнить: {DONATE}"
+    msg = f"👤 *ПРОФИЛЬ*\n\n🆔 ID: `{uid}`\n🎁 Бесплатных: `{f}/2`\n💎 Куплено: `{p}`\n⭐ VIP: {vip}\n⛔ Бан: {banned}\n\n💸 Пополнить: {DONATE}"
     await update.message.reply_text(msg, parse_mode="Markdown", disable_web_page_preview=True)
 
 async def code_cmd(update: Update, ctx):
@@ -197,6 +143,17 @@ async def list_cmd(update: Update, ctx):
     if update.effective_user.id != ADMIN: return
     await update.message.reply_text(f"VIP: {WL}\nКоды: {CODES}")
 
+async def stats_cmd(update: Update, ctx):
+    if update.effective_user.id != ADMIN: return
+    top = sorted(STATS.items(), key=lambda x: x[1], reverse=True)[:10]
+    msg = "📊 *Топ-10:*\n\n" + "\n".join([f"📞 `{p}` — {c} раз" for p, c in top])
+    await update.message.reply_text(msg, parse_mode="Markdown")
+
+async def save_cmd(update: Update, ctx):
+    uid = update.effective_user.id
+    if uid not in LAST: await update.message.reply_text("❌ Нет результатов"); return
+    await update.message.reply_text(LAST[uid], parse_mode="Markdown", disable_web_page_preview=True)
+
 async def handle(update: Update, ctx):
     uid = update.effective_user.id
     t = update.message.text.strip() if update.message.text else ""
@@ -208,26 +165,20 @@ async def handle(update: Update, ctx):
     
     if t.startswith("/car "):
         if not ok(uid) and gf(uid) <= 0: await update.message.reply_text(f"🔒 Нет доступа\n{DONATE}"); return
-        await update.message.reply_text("🚗 *Поиск...*", parse_mode="Markdown")
-        await update.message.reply_text(await car_info(t[5:].strip().upper()), parse_mode="Markdown", disable_web_page_preview=True)
+        await update.message.reply_text(f"🚗 *Авто:* [Поиск](https://carnumber.ru/api/v1?number={t[5:].strip().upper()})", parse_mode="Markdown", disable_web_page_preview=True)
         return
-    
     if t.startswith("/addr "):
         if not ok(uid) and gf(uid) <= 0: await update.message.reply_text(f"🔒 Нет доступа\n{DONATE}"); return
-        await update.message.reply_text("📍 *Поиск...*", parse_mode="Markdown")
-        await update.message.reply_text(await address_info(t[6:].strip()), parse_mode="Markdown", disable_web_page_preview=True)
+        await update.message.reply_text(f"📍 *Адрес:* [Поиск](https://nominatim.openstreetmap.org/search?q={t[6:].strip()})", parse_mode="Markdown", disable_web_page_preview=True)
         return
-    
     if t.startswith("/bin "):
         if not ok(uid) and gf(uid) <= 0: await update.message.reply_text(f"🔒 Нет доступа\n{DONATE}"); return
-        await update.message.reply_text(await bin_info(t[5:].strip()), parse_mode="Markdown", disable_web_page_preview=True)
+        await update.message.reply_text(f"💳 *BIN:* [Поиск](https://lookup.binlist.net/{t[5:].strip()})", parse_mode="Markdown", disable_web_page_preview=True)
         return
-    
     if t.startswith("/id "):
         if not ok(uid) and gf(uid) <= 0: await update.message.reply_text(f"🔒 Нет доступа\n{DONATE}"); return
-        await update.message.reply_text(await tg_id_info(t[4:].strip()), parse_mode="Markdown", disable_web_page_preview=True)
+        await update.message.reply_text(f"🆔 *TG ID:* [Профиль](https://t.me/@id{t[4:].strip()})", parse_mode="Markdown", disable_web_page_preview=True)
         return
-    
     if t.startswith("/ip "):
         if not ok(uid) and gf(uid) <= 0: await update.message.reply_text(f"🔒 Нет доступа\n{DONATE}"); return
         await update.message.reply_text(await ip_info(t[4:].strip()), parse_mode="Markdown", disable_web_page_preview=True)
@@ -238,17 +189,14 @@ async def handle(update: Update, ctx):
     
     if "@" in t and "." in t:
         if not ok(uid) and gf(uid) <= 0: await update.message.reply_text(f"🔒 Нет доступа\n{DONATE}"); return
-        await update.message.reply_text(await email_leak(t) + "\n\n" + await email_social(t), parse_mode="Markdown", disable_web_page_preview=True)
+        await update.message.reply_text(await email_leak(t), parse_mode="Markdown", disable_web_page_preview=True)
         return
-    
     if re.match(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', t):
         if not ok(uid) and gf(uid) <= 0: await update.message.reply_text(f"🔒 Нет доступа\n{DONATE}"); return
         await update.message.reply_text(await ip_info(t), parse_mode="Markdown")
         return
-    
     if t.startswith("@"):
-        await update.message.reply_text(f"🔍 *Поиск @{t[1:]}...*", parse_mode="Markdown")
-        await update.message.reply_text(f"```\n👤 @{t[1:]}\n```\n{await nick(t[1:])}", parse_mode="Markdown", disable_web_page_preview=True)
+        await update.message.reply_text(f"🔍 *Поиск @{t[1:]}...*\n\n{await nick(t[1:])}", parse_mode="Markdown", disable_web_page_preview=True)
         return
     
     if not re.match(r'^\+\d{1,3}\d{6,14}$', t):
@@ -263,15 +211,8 @@ async def handle(update: Update, ctx):
     elif uid in PAID and PAID[uid] > 0: up(uid); rep += f"💎 Ост: `{PAID[uid]}`\n\n"
     else: uf(uid); rep += f"🆓 Ост: `{gf(uid)}/2`\n\n"
     
-    rep += f"{await info(t)}\n\n📱 *Мессенджеры:*\n{await messengers(t)}\n\n"
-    rep += f"👤 *TG:* [Открыть](https://t.me/+{c})\n"
+    rep += f"{await info(t)}\n\n{await messengers(t)}\n\n{await all_links(t)}\n\n🔍 [Google](https://google.com/search?q={c}) | [VK](https://vk.com/search?c[phone]=1&c[phone_number]={c})"
     STATS[t] = STATS.get(t, 0) + 1
-    rep += f"\n{await map_link(t)}\n"
-    rep += f"\n{await ua_links(t)}\n"
-    rep += f"{await all_links(t)}\n"
-    rep += f"{await tg_search_groups(t)}\n"
-    rep += f"🔍 [Google](https://google.com/search?q={c}) | [VK](https://vk.com/search?c[phone]=1&c[phone_number]={c})\n"
-    rep += f"🔗 [WA](https://wa.me/{c}) | [TG](https://t.me/+{c})"
     LAST[uid] = rep
     await update.message.reply_text(rep, parse_mode="Markdown", disable_web_page_preview=True)
 
